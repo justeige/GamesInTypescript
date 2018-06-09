@@ -3,8 +3,8 @@ class Ball {
     constructor(startX, startY, canvas) {
         this.x = startX;
         this.y = startY;
-        this.dx = 20;
-        this.dy = 20;
+        this.dx = 5;
+        this.dy = 5;
         this.radius = 20;
         this.canvas = canvas;
         this.ctx = this.canvas.getContext("2d");
@@ -68,13 +68,29 @@ class BrickWall {
 }
 var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
-var ball = new Ball(canvas.width / 2, canvas.height - 20, canvas);
+const startX = canvas.width / 2;
+const startY = canvas.height - 20;
+var ball = new Ball(startX, startY, canvas);
 var bricks = new BrickWall(canvas);
+var paused = false;
 setInterval(draw, 10);
+var btnPause = document.getElementById("btnPause");
+btnPause.onclick = tooglePause;
+var btnRestart = document.getElementById("btnRestart");
+btnRestart.onclick = resetGame;
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ball.applySpeed();
-    ball.checkEdges();
+    if (!paused) {
+        ball.applySpeed();
+        ball.checkEdges();
+    }
     ball.draw();
     bricks.draw();
+}
+function tooglePause() {
+    paused = !paused;
+    btnPause.value = paused ? "Continue" : "Pause";
+}
+function resetGame() {
+    document.location.reload();
 }

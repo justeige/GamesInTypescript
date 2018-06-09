@@ -12,8 +12,8 @@ class Ball {
     constructor(startX: number, startY: number, canvas: HTMLCanvasElement) {
         this.x = startX;
         this.y = startY;
-        this.dx = 20;
-        this.dy = 20;
+        this.dx = 5;
+        this.dy = 5;
         this.radius = 20;
         this.canvas = canvas;
         this.ctx = <CanvasRenderingContext2D> this.canvas.getContext("2d");
@@ -88,10 +88,16 @@ class BrickWall {
 // game setup
 var canvas = <HTMLCanvasElement>document.getElementById("gameCanvas");
 var ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
-var ball = new Ball(canvas.width / 2, canvas.height - 20, canvas); // spawn at bottom screen center
+const startX = canvas.width / 2;
+const startY = canvas.height - 20;
+var ball = new Ball(startX, startY, canvas); // spawn at bottom screen center
 var bricks = new BrickWall(canvas);
+var paused = false;
 setInterval(draw, 10);
-
+var btnPause = <HTMLButtonElement> document.getElementById("btnPause");
+btnPause.onclick = tooglePause;
+var btnRestart = <HTMLButtonElement> document.getElementById("btnRestart");
+btnRestart.onclick = resetGame;
 
 // main draw function
 function draw() {
@@ -99,12 +105,22 @@ function draw() {
     // screen needs manual cleanup
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // apply physics
-    ball.applySpeed();
-    ball.checkEdges();
+    if (!paused) {
+        // apply physics
+        ball.applySpeed();
+        ball.checkEdges();
+    }
 
     // draw game elements
     ball.draw();
     bricks.draw();
 }
 
+function tooglePause() {
+    paused = !paused;
+    btnPause.value = paused ? "Continue" : "Pause";
+}
+
+function resetGame() {
+    document.location.reload();
+}
