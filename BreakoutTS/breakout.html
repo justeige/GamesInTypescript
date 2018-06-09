@@ -6,11 +6,26 @@
     <style>
     	* { padding: 0; margin: 0; }
     	canvas { background: rgb(255, 255, 255); display: block; margin: 0 auto; }
+
+        input[type=button] {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
 
-<canvas id="gameCanvas" width="1024" height="800" style="border: 1px solid black;"></canvas>
+<div style="text-align: center;">
+    <canvas id="gameCanvas" width="1024" height="800" style="border: 1px solid black;"></canvas>
+    <input id="btnPause"   type="button" value="Pause"/>
+    <input id="btnRestart" type="button" value="Restart"/>
+</div>
 
 <script src="main.js"></script>
 
