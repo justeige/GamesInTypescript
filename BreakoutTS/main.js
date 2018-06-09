@@ -3,8 +3,11 @@ class Ball {
     constructor(startX, startY, canvas) {
         this.x = startX;
         this.y = startY;
+        this.dx = 20;
+        this.dy = 20;
         this.radius = 20;
-        this.ctx = canvas.getContext("2d");
+        this.canvas = canvas;
+        this.ctx = this.canvas.getContext("2d");
     }
     draw() {
         this.ctx.beginPath();
@@ -12,6 +15,30 @@ class Ball {
         this.ctx.fillStyle = "rgba(255, 0, 0, 1.0)";
         this.ctx.fill();
         this.ctx.closePath();
+    }
+    applySpeed() {
+        this.x += this.dx;
+        this.y += this.dy;
+    }
+    checkEdges() {
+        var screenWidth = this.canvas.width - this.radius;
+        if (this.x + this.dx > screenWidth) {
+            this.x = screenWidth;
+            this.dx = -this.dx;
+        }
+        else if (this.x + this.dx < this.radius) {
+            this.x = this.radius;
+            this.dx = -this.dx;
+        }
+        var screenHeight = this.canvas.height - this.radius;
+        if (this.y + this.dy > screenHeight) {
+            this.y = screenHeight;
+            this.dy = -this.dy;
+        }
+        else if (this.y + this.dy < this.radius) {
+            this.y = this.radius;
+            this.dy = -this.dy;
+        }
     }
 }
 class BrickWall {
@@ -46,6 +73,8 @@ var bricks = new BrickWall(canvas);
 setInterval(draw, 10);
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ball.applySpeed();
+    ball.checkEdges();
     ball.draw();
     bricks.draw();
 }

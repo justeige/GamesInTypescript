@@ -2,15 +2,21 @@
 class Ball {
     public x: number;
     public y: number;
-
+    public dx: number;
+    public dy: number;
+    
     private radius: number;
+    private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
 
     constructor(startX: number, startY: number, canvas: HTMLCanvasElement) {
         this.x = startX;
         this.y = startY;
+        this.dx = 20;
+        this.dy = 20;
         this.radius = 20;
-        this.ctx = <CanvasRenderingContext2D> canvas.getContext("2d");
+        this.canvas = canvas;
+        this.ctx = <CanvasRenderingContext2D> this.canvas.getContext("2d");
     }
 
     draw(): void {
@@ -19,6 +25,34 @@ class Ball {
         this.ctx.fillStyle = "rgba(255, 0, 0, 1.0)";
         this.ctx.fill();
         this.ctx.closePath();
+    }
+
+    applySpeed(): void {
+        this.x += this.dx;
+        this.y += this.dy;
+    }
+
+    checkEdges(): void {
+        
+        // bouncing left or right
+        var screenWidth = this.canvas.width - this.radius;
+        if  (this.x + this.dx >  screenWidth) {
+            this.x = screenWidth;
+            this.dx = - this.dx;
+        } else if (this.x + this.dx < this.radius) {
+            this.x = this.radius;
+            this.dx = - this.dx;
+        }
+    
+         // bouncing bottom or top
+        var screenHeight = this.canvas.height - this.radius;
+        if (this.y + this.dy > screenHeight) {
+            this.y = screenHeight;
+            this.dy = - this.dy;
+        } else if (this.y + this.dy < this.radius) {
+            this.y = this.radius;
+            this.dy = - this.dy;
+        }
     }
 }
 
@@ -65,10 +99,12 @@ function draw() {
     // screen needs manual cleanup
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // apply physics
+    ball.applySpeed();
+    ball.checkEdges();
+
     // draw game elements
     ball.draw();
     bricks.draw();
-
-    
 }
 
