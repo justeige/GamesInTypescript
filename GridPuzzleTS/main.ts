@@ -35,23 +35,20 @@ function drawGrid(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement): voi
 
     ctx.beginPath(); 
     for (var x = 0;x <= w; x += step) {
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, h);
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
     }
-    // set the color of the line
     ctx.strokeStyle = 'rgb(20,20,20)';
     ctx.lineWidth = lineWidth;
-    // the stroke will actually paint the current path 
+    
     ctx.stroke(); 
-    // for the sake of the example 2nd path
     ctx.beginPath(); 
-    for (var y=0;y<=h;y+=step) {
-            ctx.moveTo(0, y);
-            ctx.lineTo(w, y);
+    for (var y = 0;y <= h;y += step) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
     }
-    // set the color of the line
+    
     ctx.strokeStyle = 'rgb(20,20,20)';
     ctx.lineWidth = lineWidth;
-    // for your original question - you need to stroke only once
     ctx.stroke(); 
 }
