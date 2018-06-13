@@ -1,10 +1,20 @@
+
+class Vector {
+    public x: number;
+    public y: number;
+
+    constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
 /// TODO move into its own file
 class Ball {
     public x: number;
     public y: number;
-    public dx: number;
-    public dy: number;
     
+    private velocity: Vector;
     private radius: number;
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
@@ -12,11 +22,24 @@ class Ball {
     constructor(startX: number, startY: number, canvas: HTMLCanvasElement) {
         this.x = startX;
         this.y = startY;
-        this.dx = 3;
-        this.dy = 5;
+        // start velocity (for testing!)
+        this.velocity = new Vector(3, 5);
         this.radius = 20;
         this.canvas = canvas;
         this.ctx = <CanvasRenderingContext2D> this.canvas.getContext("2d");
+    }
+
+    setVelocity(dx: number, dy: number): void {
+        this.velocity.x = dx;
+        this.velocity.y = dy;
+    }
+
+    getVelocity(): Vector {
+        return this.velocity;
+    }
+
+    getRadius(): number {
+        return this.radius;
     }
 
     draw(): void {
@@ -28,30 +51,30 @@ class Ball {
     }
 
     applySpeed(): void {
-        this.x += this.dx;
-        this.y += this.dy;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
     }
 
     checkEdges(): void {
         
         // bouncing left or right
         var screenWidth = this.canvas.width - this.radius;
-        if  (this.x + this.dx >  screenWidth) {
+        if  (this.x + this.velocity.x >  screenWidth) {
             this.x = screenWidth;
-            this.dx = - this.dx;
-        } else if (this.x + this.dx < this.radius) {
+            this.velocity.x = - this.velocity.x;
+        } else if (this.x + this.velocity.x < this.radius) {
             this.x = this.radius;
-            this.dx = - this.dx;
+            this.velocity.x = - this.velocity.x;
         }
     
          // bouncing bottom or top
         var screenHeight = this.canvas.height - this.radius;
-        if (this.y + this.dy > screenHeight) {
+        if (this.y + this.velocity.y > screenHeight) {
             this.y = screenHeight;
-            this.dy = - this.dy;
-        } else if (this.y + this.dy < this.radius) {
+            this.velocity.y = - this.velocity.y;
+        } else if (this.y + this.velocity.y < this.radius) {
             this.y = this.radius;
-            this.dy = - this.dy;
+            this.velocity.y = - this.velocity.y;
         }
     }
 }
@@ -110,13 +133,15 @@ class BrickWall {
         }
     }
 
-    collide(x: number, y: number, dy: number): number {
+    collide(x: number, y: number, ball: Ball): number {
+        var radius = ball.getRadius();
+        var dy = ball.getVelocity().y;
         for(var column = 0; column < this.maxColumns; column++) {
             for(var row = 0; row < this.maxRows; row++) {
                 let brick = this.bricks[column][row];
                 if (brick.alive) {
-                    if (x > brick.x && x < brick.x + this.brickWidth 
-                     && y > brick.y && y < brick.y + this.brickHeight) {
+                    if (x + radius > brick.x && x - radius < brick.x + this.brickWidth
+                     && y + radius > brick.y && y - radius < brick.y + this.brickHeight) {
                         this.bricks[column][row].alive = false;
                         return - dy; // collided with one brick
                     }
@@ -151,7 +176,8 @@ function draw() {
         // apply physics
         ball.applySpeed();
         ball.checkEdges();
-        ball.dy = bricks.collide(ball.x, ball.y, ball.dy);
+        var dy = bricks.collide(ball.x, ball.y, ball);
+        ball.setVelocity(ball.getVelocity().x, dy);
     }
 
     // draw game elements
