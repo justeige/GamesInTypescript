@@ -1,10 +1,4 @@
 "use strict";
-class Vector {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-}
 class Ball {
     constructor(startX, startY, canvas) {
         this.x = startX;
@@ -115,6 +109,12 @@ class BrickWall {
             }
         }
         return dy;
+    }
+}
+class Vector {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
     }
 }
 var canvas = document.getElementById("gameCanvas");
