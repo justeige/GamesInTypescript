@@ -117,6 +117,23 @@ class Vector {
         this.y = y;
     }
 }
+class Paddle {
+    constructor(startX, startY, canvas) {
+        this.x = startX;
+        this.y = startY;
+        this.width = 120;
+        this.height = 30;
+        this.canvas = canvas;
+        this.ctx = this.canvas.getContext("2d");
+    }
+    draw() {
+        this.ctx.beginPath();
+        this.ctx.rect(this.x, this.y, this.width, this.height);
+        this.ctx.fillStyle = "rgba(0,255,0,1.0)";
+        this.ctx.fill();
+        this.ctx.closePath();
+    }
+}
 var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
 const startX = canvas.width / 2;
@@ -129,6 +146,11 @@ var btnPause = document.getElementById("btnPause");
 btnPause.onclick = tooglePause;
 var btnRestart = document.getElementById("btnRestart");
 btnRestart.onclick = resetGame;
+var rightPressed = false;
+var leftPressed = false;
+document.addEventListener("keydown", keyPressedEvent, false);
+document.addEventListener("keyup", keyReleasedEvent, false);
+var paddle = new Paddle(canvas.width / 2, canvas.height - 20, canvas);
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!paused) {
@@ -136,9 +158,16 @@ function draw() {
         ball.checkEdges();
         var dy = bricks.collide(ball.x, ball.y, ball);
         ball.setVelocity(ball.getVelocity().x, dy);
+        if (rightPressed) {
+            paddle.x += 5;
+        }
+        if (leftPressed) {
+            paddle.x -= 5;
+        }
     }
     ball.draw();
     bricks.draw();
+    paddle.draw();
 }
 function tooglePause() {
     paused = !paused;
@@ -146,4 +175,20 @@ function tooglePause() {
 }
 function resetGame() {
     document.location.reload();
+}
+function keyPressedEvent(e) {
+    if (e.keyCode == 68) {
+        rightPressed = true;
+    }
+    else if (e.keyCode == 65) {
+        leftPressed = true;
+    }
+}
+function keyReleasedEvent(e) {
+    if (e.keyCode == 68) {
+        rightPressed = false;
+    }
+    else if (e.keyCode == 65) {
+        leftPressed = false;
+    }
 }

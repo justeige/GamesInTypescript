@@ -1,7 +1,7 @@
 /// <reference path="vector.ts" />
 /// <reference path="ball.ts" />
 /// <reference path="brick.ts" />
-
+/// <reference path="paddle.ts" />
 
 
 // game setup
@@ -18,6 +18,15 @@ btnPause.onclick = tooglePause;
 var btnRestart = <HTMLButtonElement> document.getElementById("btnRestart");
 btnRestart.onclick = resetGame;
 
+var rightPressed: boolean = false;
+var leftPressed: boolean = false;
+
+document.addEventListener("keydown", keyPressedEvent, false);
+document.addEventListener("keyup", keyReleasedEvent, false);
+
+var paddle = new Paddle(canvas.width / 2, canvas.height - 20, canvas);
+
+
 // main draw function
 function draw() {
     
@@ -30,11 +39,20 @@ function draw() {
         ball.checkEdges();
         var dy = bricks.collide(ball.x, ball.y, ball);
         ball.setVelocity(ball.getVelocity().x, dy);
+
+        // apply user input
+        if (rightPressed) {
+            paddle.x += 5;
+        } 
+        if (leftPressed) {
+            paddle.x -= 5;
+        } 
     }
 
     // draw game elements
     ball.draw();
     bricks.draw();
+    paddle.draw();
 }
 
 function tooglePause() {
@@ -44,4 +62,22 @@ function tooglePause() {
 
 function resetGame() {
     document.location.reload();
+}
+
+function keyPressedEvent(e: KeyboardEvent) {
+    if(e.keyCode == 68) {
+        rightPressed = true;
+    }
+    else if(e.keyCode == 65) {
+        leftPressed = true;
+    }
+}
+
+function keyReleasedEvent(e: KeyboardEvent) {
+    if(e.keyCode == 68) {
+        rightPressed = false;
+    }
+    else if(e.keyCode == 65) {
+        leftPressed = false;
+    }
 }
