@@ -43,7 +43,7 @@ class Ball {
         this.y += this.velocity.y;
     }
 
-    checkEdges(): void {
+    checkEdges(): boolean {
         
         // bouncing left or right
         var screenWidth = this.canvas.width - this.radius;
@@ -58,11 +58,14 @@ class Ball {
          // bouncing bottom or top
         var screenHeight = this.canvas.height - this.radius;
         if (this.y + this.velocity.y > screenHeight) {
-            this.y = screenHeight;
-            this.velocity.y = - this.velocity.y;
+            // collision with bottom == lose
+            return true;
         } else if (this.y + this.velocity.y < this.radius) {
             this.y = this.radius;
             this.velocity.y = - this.velocity.y;
         }
+
+        // didn't collide with bottom
+        return false;
     }
 }

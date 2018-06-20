@@ -20,6 +20,7 @@ class BrickWall {
     private padding = 20;
     private ctx: CanvasRenderingContext2D;
     private bricks: Brick[][];
+    private aliveCount = 0;
 
     constructor(canvas: HTMLCanvasElement) {
         const offsetLeft = 100;
@@ -34,6 +35,11 @@ class BrickWall {
                 this.bricks[column][row] = new Brick(x,y);
             }
         }
+        this.aliveCount = this.maxBricks;
+    }
+
+    anyAlive(): boolean {
+        return this.aliveCount > 0;
     }
 
     draw(): void {
@@ -52,8 +58,10 @@ class BrickWall {
         }
     }
 
-    collide(x: number, y: number, ball: Ball): number {
-        var radius = ball.getRadius();
+    collide(ball: Ball): number {
+        let x = ball.x;
+        let y = ball.y;
+        let radius = ball.getRadius();
         var dy = ball.getVelocity().y;
         for(var column = 0; column < this.maxColumns; column++) {
             for(var row = 0; row < this.maxRows; row++) {
@@ -61,6 +69,7 @@ class BrickWall {
                 if (brick.alive) {
                     if (x + radius > brick.x && x - radius < brick.x + this.brickWidth
                      && y + radius > brick.y && y - radius < brick.y + this.brickHeight) {
+                        this.aliveCount--;
                         this.bricks[column][row].alive = false;
                         return - dy; // collided with one brick
                     }

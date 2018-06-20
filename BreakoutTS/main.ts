@@ -8,7 +8,7 @@
 var canvas = <HTMLCanvasElement>document.getElementById("gameCanvas");
 var ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
 const startX = canvas.width / 2;
-const startY = canvas.height - 20;
+const startY = canvas.height / 2;
 var ball = new Ball(startX, startY, canvas); // spawn at bottom screen center
 var bricks = new BrickWall(canvas);
 var paused = false;
@@ -36,8 +36,18 @@ function draw() {
     if (!paused) {
         // apply physics
         ball.applySpeed();
-        ball.checkEdges();
-        var dy = bricks.collide(ball.x, ball.y, ball);
+        if (ball.checkEdges()) {
+            // triggered lose condition
+            alert("Game over!");
+            paused = true; // needs stop condition!
+            return;
+        }
+
+        // handle collision
+        var dy = bricks.collide(ball);
+        ball.setVelocity(ball.getVelocity().x, dy);
+
+        dy = paddle.collide(ball);
         ball.setVelocity(ball.getVelocity().x, dy);
 
         // apply user input
@@ -47,6 +57,14 @@ function draw() {
         if (leftPressed) {
             paddle.x -= 5;
         } 
+
+        // check for winning
+        if (!bricks.anyAlive()) {
+            // triggered win condition
+            alert("You won!");
+            paused = true; // needs stop condition!
+            return;
+        }
     }
 
     // draw game elements

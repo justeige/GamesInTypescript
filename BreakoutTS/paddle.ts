@@ -11,7 +11,7 @@ class Paddle {
         this.x = startX;
         this.y = startY;
         this.width = 120;
-        this.height = 30;
+        this.height = 15;
         this.canvas = canvas;
         this.ctx = <CanvasRenderingContext2D> this.canvas.getContext("2d");
     }
@@ -24,4 +24,17 @@ class Paddle {
         this.ctx.closePath();
     }
     
+    collide(ball: Ball): number {
+        let x = ball.x;
+        let y = ball.y;
+        let radius = ball.getRadius();
+        var dy = ball.getVelocity().y;
+
+        if (x + radius > this.x && x - radius < this.x + this.width
+            && y + radius > this.y && y - radius < this.y + this.height) {
+            return - dy; // collided
+        }
+
+        return dy; // do nothing
+    }
 }
